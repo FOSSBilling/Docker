@@ -1,17 +1,20 @@
-FROM php:8.0-apache
-LABEL version="0.2.3"
+# parent image from which we build
+FROM php:8.2-apache
 
-# Configure Apache
-COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY start-apache /usr/local/bin
-RUN a2enmod rewrite
+# version corresponding to FOSSBilling
+LABEL version="0.2.4"
 
-# Copy FOSSBilling to the container and change the owner of the files
-COPY src /var/www/html
-RUN chown -R www-data:www-data /var/www/html
+# copy FOSSBilling from host to /var/www/html of image
+COPY path-to-fossbilling/ /var/www/html
+COPY path-to-fossbilling/config-sample.php /var/www/html/config.php
+COPY path-to-fossbilling/htaccess.txt /var/www/html/.htaccess
 
-# Install the PDO extension
-RUN docker-php-ext-configure pdo_mysql \
-	&& docker-php-ext-install -j$(nproc) pdo_mysql
-
-CMD ["start-apache"]
+# setup image for FOSSBilling
+RUN apt update\
+    && apt install -y --no-install-recommends libicu-dev cron\
+    && docker-php-ext-install pdo_mysql\
+    && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf\
+    && a2enmod rewrite\
+    && chown -R www-data:www-data /var/www/html\
+    && (crontab -l; echo "*/5 * * * * php /var/www/FOSSBilling/cron.php") | crontab\
+    && php -dmemory_limit=1G
