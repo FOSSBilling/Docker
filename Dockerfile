@@ -2,7 +2,7 @@ FROM php:8.1-apache
 LABEL version="0.2.8"
 
 RUN apt update; \
-apt install -y --no-install-recommends wget unzip cron;
+apt install -y --no-install-recommends wget unzip;
     
 # Configure Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
@@ -17,7 +17,7 @@ RUN set -eux; \
 # Copy FOSSBilling to the container and change the owner of the file
 
 RUN chown -R www-data:www-data /var/www/html
-RUN (crontab -l; echo "*/5 * * * * php /var/www/html/cron.php") | crontab
+RUM rm /var/www/html/FOSSBilling.zip
 
 # Install the PDO extension
 RUN docker-php-ext-configure pdo_mysql \
