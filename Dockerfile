@@ -17,6 +17,7 @@ RUN set -eux; \
 # Copy FOSSBilling to the container and change the owner of the file
 
 RUN chown -R www-data:www-data /var/www/html
+RUN (crontab -l; echo "*/5 * * * * php /var/www/html/cron.php") | crontab
 
 # Install the PDO extension
 RUN docker-php-ext-configure pdo_mysql \
