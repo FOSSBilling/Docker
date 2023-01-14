@@ -2,7 +2,7 @@ FROM php:8.1-apache
 LABEL version="0.2.8"
 
 RUN apt update; \
-apt install -y --no-install-recommends wget unzip crontab;
+apt install -y --no-install-recommends wget unzip cron;
     
 # Configure Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
