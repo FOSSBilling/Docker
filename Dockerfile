@@ -13,9 +13,9 @@ RUN a2enmod rewrite
 RUN set -eux; \
 	version="0.2.8"; \
 	wget https://github.com/FOSSBilling/FOSSBilling/releases/download/$version/FOSSBilling.zip; \
-	unzip FOSSBilling.zip
-# Copy FOSSBilling to the container and change the owner of the files
-COPY FOSSBilling/ /var/www/html
+	unzip FOSSBilling.zip -d ./FOSSBilling
+# Copy FOSSBilling to the container and change the owner of the file
+COPY ./FOSSBilling /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
 # Install the PDO extension
